@@ -1,0 +1,10 @@
+{
+  "name": "dev-opinions",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "~1.0.1",
+    "express": "~4.0.0",
+    "mongoose": "~3.6.13",
+    "requirejs": "^2.3.2"
+  }
+}
