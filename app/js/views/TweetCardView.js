@@ -14,8 +14,8 @@ define([
     template: _.template(TweetCardTemplate),
 
     render: function(){
-      var tweetData = this.model.attributes;
-      var date = new Date(tweetData.timestamp);
+      var tweetData = this.model.attributes,
+          date = new Date(tweetData.timestamp);
 
       tweetData.timeStamp = moment(date).format("dddd, MMMM Do YYYY, h:mm:ss a");
 

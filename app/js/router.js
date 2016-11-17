@@ -17,7 +17,6 @@ define([
     },
 
     showUsers: function() {
-      console.log("show users");
       var usersView = new UserListView();
       usersView.render();
     }

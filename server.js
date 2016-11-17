@@ -1,9 +1,9 @@
 //packages
-var express = require('express');
-var app = express();  // define app using express
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
-var Tweet = require('./app/db-models/tweet');
+var express = require('express'),
+    app = express(),  // define app using express
+    bodyParser = require('body-parser'),
+    mongoose = require('mongoose'),
+    Tweet = require('./app/db-models/tweet');
 
 // configure app to use bodyParser to get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -14,10 +14,9 @@ app.use(express.static(__dirname));
 //set up mongodb connection
 mongoose.connect('mongodb://localhost:27017/devopinons');
 
-//default port
-var port = process.env.PORT || 8080;
-// get an instance of the express Router
-var router = express.Router();
+//set default port and get an instance of the express Router
+var port = process.env.PORT || 8080,
+    router = express.Router();
 
 //middleware to use for all requests
 router.use(function(req, res, next) {

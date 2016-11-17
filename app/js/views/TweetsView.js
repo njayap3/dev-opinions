@@ -20,17 +20,39 @@ define([
         tweetsCount: 0,
 
         initialize: function() {
+            var fetchTweets;
             //new collection
+            this.initializeCollection();
+            //new session user
+            this.createUserSession();
+            this.addEventListeners();
+            
+            //check for new tweets/messages
+            fetchTweets = function() {
+                //fetch data from server
+                this.collection.fetch({
+                    add: true
+                });
+                setTimeout(fetchTweets, 10000);
+            }.bind(this);
+
+            fetchTweets();
+
+            //set the initial template to be always shown
+            this.initialRender();
+        },
+
+        initializeCollection: function() {
             this.collection = new TweetsCollection();
             this.collection.sort();
+        },
 
-            //set a random userId for the session
-            if(!sessionStorage.getItem('devOpinions-userId')) {
-                var userIdNum = Utilities.getRandomInt(1, 100000);
-                sessionStorage.setItem('devOpinions-userId', userIdNum);
-            }
+        initialRender: function() {
+            var userData = this.getUserInfo();
+            this.$el.html(this.template(userData));
+        },
 
-            //add the event listeners
+        addEventListeners: function() {
             this.collection.on('add', function() {
                 if(this.tweetsCount && (this.tweetsCount != this.collection.length)) {
                     $('.newTweetsNumber').html(this.collection.length - this.tweetsCount);
@@ -41,25 +63,23 @@ define([
                     this.tweetsCount = this.collection.length;
                 }
             }, this);
+        },
 
-            var fetchTweets = function() {
-                //fetch data from server
-                this.collection.fetch({
-                    add: true
-                });
-                setTimeout(fetchTweets, 10000);
-            }.bind(this);
-
-            fetchTweets();
-
-            var userData = this.getUserInfo();
-            this.$el.html(this.template(userData));
+        createUserSession: function() {
+            var userIdNum;
+            //set a random userId for the session
+            if(!sessionStorage.getItem('devOpinions-userId')) {
+                userIdNum = Utilities.getRandomInt(1, 100000);
+                sessionStorage.setItem('devOpinions-userId', userIdNum);
+            }
         },
 
         postTweet: function() {
-            var message = $('.tweetmessage').val();
+            var message, newTweet;
 
-            var newTweet = new TweetsModel({
+            message = $('.tweetmessage').val();
+
+            newTweet = new TweetsModel({
                 message: message,
                 userId: sessionStorage.getItem('devOpinions-userId'),
                 timestamp: new Date()
@@ -91,12 +111,14 @@ define([
         },
 
         render: function() {
+            var container, tweetcard;
+
             $('#tweetslist').empty();
 
-            var container = document.createDocumentFragment();
+            container = document.createDocumentFragment();
 
             _.each(this.collection.toArray(), function(tweet) {
-                var tweetcard = new TweetCardView({model: tweet}).render().el;
+                tweetcard = new TweetCardView({model: tweet}).render().el;
                 container.appendChild(tweetcard);
             }.bind(this));
 
